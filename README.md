@@ -1,1 +1,1 @@
-# Intune custom compliance for symantec antivirus check 
+# Intune Scripts by redom@r
