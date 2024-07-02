@@ -1,1 +1,1 @@
-# Intune Scripts by redom@r
+By Intune/SCCM guru X.com/Thekingsmakers
