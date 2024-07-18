@@ -1,0 +1,39 @@
+import pandas as pd
+
+def compare_and_export(file_export, file_compare, output_file):
+    # Load the Excel files
+    df_export = pd.read_excel(file_export)
+    df_compare = pd.read_excel(file_compare)
+
+    # Debugging: Print column names
+    print("Columns in export file:", df_export.columns)
+    print("Columns in compare file:", df_compare.columns)
+
+    # Ensure necessary columns are in the DataFrames
+    required_columns = ['DeviceName', 'approximateLastSignInDateTime']
+    if not all(col in df_export.columns for col in required_columns):
+        raise ValueError("The export file must contain 'DeviceName' and 'approximateLastSignInDateTime' columns.")
+
+    if 'DeviceName' not in df_compare.columns:
+        raise ValueError("The comparison file must contain a 'DeviceName' column.")
+
+    # Convert 'approximateLastSignInDateTime' to datetime and sort
+    df_export['approximateLastSignInDateTime'] = pd.to_datetime(df_export['approximateLastSignInDateTime'])
+    df_export.sort_values(by='approximateLastSignInDateTime', ascending=False, inplace=True)
+
+    # Drop duplicates, keeping the last sign-in date
+    df_export = df_export.drop_duplicates(subset='DeviceName', keep='first')
+
+    # Find matching DeviceNames
+    matching_devices = df_export[df_export['DeviceName'].isin(df_compare['DeviceName'])]
+
+    # Write the output to a new Excel file
+    matching_devices.to_excel(output_file, index=False)
+
+# File paths
+export_file = r'D:\MicrosoftHub\Teams\export.xlsx'
+compare_file = r'D:\MicrosoftHub\Teams\Teams.xlsx' # Corrected the file extension
+output_file = r'D:\MicrosoftHub\Teams\output.xlsx'
+
+# Execute the function with the specified file paths
+compare_and_export(export_file, compare_file, output_file)
