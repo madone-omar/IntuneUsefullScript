@@ -1,0 +1,51 @@
+<#
+.SYNOPSIS
+   PowerShell script that installs the Remote Server Administration Tools (RSAT) for Active Directory on any version of Windows (Windows 10, 11, and Windows Server versions), you can use the following script.
+
+.DESCRIPTION
+    PowerShell script that installs the Remote Server Administration Tools (RSAT) for Active Directory on any version of Windows (Windows 10, 11, and Windows Server versions), you can use the following script.
+
+    If any of these requirements are not met, the script provides guidance for remediation.
+
+.NOTES
+    Author: Omar Osman Mahat
+    Twitter: https://x.com/thekingsmakers
+
+.PARAMETER None
+    This script does not accept any parameters.
+
+.EXAMPLE
+    Run the script to check if the system is BitLocker ready:
+ 
+
+
+.LINK
+    https://x.com/thekingsmakers
+#>
+
+
+# Check if the operating system is Windows 10 version 22H2 or later
+$osVersion = [System.Environment]::OSVersion.Version
+if ($osVersion.Major -eq 10 -and $osVersion.Build -ge 22621) {
+    Write-Host "This script is compatible with Windows 10 version 22H2 or later."
+
+    # Check if RSAT for Active Directory is already installed
+    $rsatADFeature = Get-WindowsCapability -Name RSAT.ActiveDirectory* -Online
+    if ($rsatADFeature.State -eq 'Installed') {
+        Write-Host "RSAT Active Directory is already installed."
+    } else {
+        Write-Host "Installing RSAT Active Directory tools..."
+
+        # Install RSAT for Active Directory
+        Add-WindowsCapability -Online -Name Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0
+
+        # Check the installation status
+        if ((Get-WindowsCapability -Name RSAT.ActiveDirectory* -Online).State -eq 'Installed') {
+            Write-Host "RSAT Active Directory tools installed successfully."
+        } else {
+            Write-Host "Failed to install RSAT Active Directory tools."
+        }
+    }
+} else {
+    Write-Host "This script is not compatible with the current operating system version. Please run it on Windows 10 version 22H2 or later."
+}
