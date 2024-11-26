@@ -1,7 +1,7 @@
 # Author: Omar Osman Mahat
 # Twitter: @thekingsmakers
 # Description: This script completely uninstalls the SCCM client from a machine.
- 
+# Version: 1.0
 # Function to stop services and processes related to SCCM
 function Stop-SCCMServices {
     $services = @("CcmExec", "smstsmgr", "CcmSetup")
