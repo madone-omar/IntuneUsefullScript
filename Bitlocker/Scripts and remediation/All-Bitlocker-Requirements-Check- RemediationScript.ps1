@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    This script checks if the system meets the requirements for BitLocker silent encryption, including TPM version 2.0, UEFI boot mode, Secure Boot status, Kernel DMA Protection, and PCR7 Configuration status.
+    This script checks if the system meets the requirements for BitLocker silent encryption, including TPM version 1.2, UEFI boot mode, Secure Boot status, Kernel DMA Protection, and PCR7 Configuration status.
 
 .DESCRIPTION
     The script performs a series of checks to validate that the system is equipped for BitLocker silent encryption. It checks:
-    - TPM (Trusted Platform Module) availability and version (requires version 2.0 or higher).
+    - TPM (Trusted Platform Module) availability and version (requires version 1.2 or higher).
     - UEFI firmware mode, ensuring the system is not in Legacy BIOS mode.
     - Secure Boot status, verifying if Secure Boot is enabled.
     - PCR7 Configuration status to confirm readiness for encryption.
@@ -32,17 +32,19 @@
     https://x.com/thekingsmakers
 #>
 
+
+
 # Function to check TPM version
 function Check-TPM {
     $tpm = Get-WmiObject -Namespace "Root\CIMv2\Security\MicrosoftTpm" -Class Win32_Tpm
     if ($tpm -eq $null) {
-        Write-Host "TPM is not available on this system."
+        Write-Host "TPM is not available on this system." -ForegroundColor Red
         return $false
-    } elseif ($tpm.SpecVersion -ge "2.0") {
-        Write-Host "TPM version 2.0 or higher is available."
+    } elseif ($tpm.SpecVersion -ge "1.2") {
+        Write-Host "TPM version 1.2 or higher is available." -ForegroundColor Green
         return $true
     } else {
-        Write-Host "TPM version is lower than 2.0."
+        Write-Host "TPM version is lower than 1.2."
         return $false
     }
 }
@@ -50,10 +52,10 @@ function Check-TPM {
 # Function to check UEFI firmware using $env:firmware_type
 function Check-UEFI {
     if ($env:firmware_type -eq "UEFI") {
-        Write-Host "System is booting in UEFI mode."
+        Write-Host "System is booting in UEFI mode." -ForegroundColor Green
         return $true
     } else {
-        Write-Host "System is booting in Legacy BIOS mode."
+        Write-Host "System is booting in Legacy BIOS mode." -ForegroundColor Red
         return $false
     }
 }
@@ -62,10 +64,10 @@ function Check-UEFI {
 function Check-SecureBoot {
     $secureBoot = (Confirm-SecureBootUEFI)
     if ($secureBoot) {
-        Write-Host "Secure Boot is enabled."
+        Write-Host "Secure Boot is enabled." -ForegroundColor Green
         return $true
     } else {
-        Write-Host "Secure Boot is not enabled."
+        Write-Host "Secure Boot is not enabled." -ForegroundColor Red
         return $false
     }
 }
@@ -120,10 +122,10 @@ namespace SystemInfo
     $bootDMAProtection = ([SystemInfo.NativeMethods]::BootDmaCheck()) -ne 0
 
     if ($bootDMAProtection) {
-        Write-Host "Kernel DMA Protection: On"
+        Write-Host "Kernel DMA Protection: On" -ForegroundColor Green
         return $true
     } else {
-        Write-Host "Kernel DMA Protection: Off or Not Supported"
+        Write-Host "Kernel DMA Protection: Off or Not Supported" -ForegroundColor Red
         return $false
     }
 }
@@ -143,14 +145,14 @@ function Check-PCR7Configuration {
     # Evaluate PCR7 status for readiness
     $isPCR7Ready = $false
     if ($pcr7Status) {
-        $isPCR7Ready = $pcr7Status -match "Binding Possible|Bound"
+        $isPCR7Ready = $pcr7Status -match "Binding Possible|Bound" 
         if ($isPCR7Ready) {
-            Write-Host "PCR7 Configuration is ready for Encryption"
+            Write-Host "PCR7 Configuration is ready for Encryption" -ForegroundColor Green
         } else {
-            Write-Host "PCR7 is not ready for encryption"
+            Write-Host "PCR7 is not ready for encryption" -ForegroundColor Red
         }
     } else {
-        Write-Host "PCR7 Configuration line not found"
+        Write-Host "PCR7 Configuration line not found" -ForegroundColor Yellow
     }
 
     # Clean up the temporary file after parsing
@@ -159,18 +161,44 @@ function Check-PCR7Configuration {
     return $isPCR7Ready
 }
 
+
+# Function to check WinRE status
+function Check-WinREStatus {
+    try {
+        # Query the WinRE status
+        $winREConfig = (reagentc /info) 2>&1
+        
+        # Parse the output to check if it's enabled
+        if ($winREConfig -match "Windows RE status.*Enabled") {
+            Write-Output "WinRE is enabled." -ForegroundColor Green
+            #Exit 0  # Exit with success code
+        } else {
+            Write-Output "WinRE is either disabled or cannot be determined." -ForegroundColor Red
+            #Exit 1  # Exit with failure code
+        }
+    } catch {
+        Write-Output "Error querying WinRE status: $_" -ForegroundColor Yellow
+        #Exit 1  # Exit with failure code
+    }
+}
+
+# Run the function
+Check-WinREStatus
+
+
 # Main Detection Block
 $tpmCheck = Check-TPM
 $uefiCheck = Check-UEFI
 $secureBootCheck = Check-SecureBoot
 $kernelDMACheck = Check-KernelDMAProtection
 $pcr7Check = Check-PCR7Configuration
+$CheckWinREStatus = Check-WinREStatus
 
 # If all requirements are met, return success
-if ($tpmCheck -and $uefiCheck -and $secureBootCheck -and $kernelDMACheck -and $pcr7Check) {
-    Write-Host "All requirements for BitLocker silent encryption are met."
+if ($tpmCheck -and $uefiCheck -and $secureBootCheck -and $kernelDMACheck -and $pcr7Check -and $CheckWinREStatus) {
+    Write-Host "All requirements for BitLocker silent encryption are met." -ForegroundColor Green
     exit 0  # Exit with code 0 for success
 } else {
-    Write-Host "Some requirements for BitLocker silent encryption are not met."
+    Write-Host "Some requirements for BitLocker silent encryption are not met." -ForegroundColor Red
     exit 1  # Exit with code 1 for failure
 }
