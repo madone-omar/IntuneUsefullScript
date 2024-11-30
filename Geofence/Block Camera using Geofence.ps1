@@ -1,4 +1,31 @@
-﻿# Define the target coordinates
+﻿<#
+.SYNOPSIS
+    This script checks if you are in a certain Geocordinate and blocks camera based on the required cordinates
+
+.DESCRIPTION
+    The script performs 
+    - checks your current location
+    - blocks camera is you are in the mentioned cordinates
+    - enables camera if you are not in the mentioned cordinates
+
+.NOTES
+    Author: Omar Osman Mahat
+    Twitter: https://x.com/thekingsmakers
+
+.PARAMETER None
+    This script does not accept any parameters.
+
+.EXAMPLE
+    Run the script to check if the system is BitLocker ready:
+    
+    ```powershell
+    .\Block Camera using Geofence.ps1
+    ```
+#>
+
+ 
+ 
+ # Define the target coordinates
 $targetLatitude = 21.2855
 $targetLongitude = 21.5310
 
