@@ -16,7 +16,7 @@
     This script does not accept any parameters.
 
 .EXAMPLE
-    Run the script to check if the system is BitLocker ready:
+    Run the script to enable/Disable Camera based on the mentioned Cordinates:
     
     ```powershell
     .\Block Camera using Geofence.ps1
