@@ -1,7 +1,7 @@
 ﻿<#
 .SYNOPSIS
     This script checks if you are in a certain Geocordinate and blocks camera based on the required cordinates
-
+    Add it as remeediation to run everytime to get precise functionality
 .DESCRIPTION
     The script performs 
     - checks your current location
