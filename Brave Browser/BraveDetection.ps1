@@ -1,4 +1,27 @@
-﻿# PowerShell script to detect Brave Browser installation with exit codes for Intune remediation
+# 
+
+<#
+.SYNOPSIS
+   PowerShell script to detect Brave Browser installation with exit codes for Intune remediation
+
+.DESCRIPTION
+   PowerShell script to detect Brave Browser installation with exit codes for Intune remediation
+
+.PARAMETER [ParameterName]
+    All steps are pre described
+    
+.EXAMPLE
+    script supports no parameters
+
+.NOTES
+    Author: Omar Osman Mahat
+    Created: 2/12/2024
+    Last Updated: 2/12/2024
+    Version: 1.0
+
+#>
+
+
 
 # Function to check if Brave is installed in user profiles
 Function Detect-BraveInUserProfiles {
