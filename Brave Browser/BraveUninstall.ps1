@@ -1,5 +1,27 @@
 ﻿# Enhanced PowerShell script to remove and block Brave Browser
 
+<#
+.SYNOPSIS
+    ﻿# Enhanced PowerShell script to remove and block Brave Browser
+
+.DESCRIPTION
+    ﻿# Enhanced PowerShell script to remove and block Brave Browser
+
+.PARAMETER [ParameterName]
+    All steps are pre described
+    
+.EXAMPLE
+    script supports no parameters
+
+.NOTES
+    Author: Omar Osman Mahat
+    Created: 2/12/2024
+    Last Updated: 2/12/2024
+    Version: 1.0
+
+#>
+
+
 # Function to check and remove Brave from all user profiles
 Function Remove-BraveFromUserProfiles {
     Write-Host "Checking Brave Browser installation in user profiles..."
