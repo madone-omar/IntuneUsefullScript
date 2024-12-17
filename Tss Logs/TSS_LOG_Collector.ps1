@@ -1,4 +1,18 @@
-﻿### Define variables
+<#
+Collect TSS logs with Intune Remediation
+The script does the following:
+ ____________________________________________________________________________________________________________________________________
+1. Downloads the TSS tool:  https://aka.ms/getTSS
+2. Creates a TempZ folder in C:\ and copy the TSS folder and unzip it
+3. Runs PowerShell as administrator and navigates to Temp folder with cd C:\Tempz\TSS
+4. Then runs the script with this command: .\TSS.ps1 -CollectLog DND_SetupReport -AcceptEula
+5. Waits until the script completes, you will find the result in: C:\MS_DATA
+_______________________________________________________________________________________________________________________________________
+Created By Omar Osman Mahat 
+Date: 17/12/2024
+#>
+ 
+ ### Define variables
 $downloadUrl = "https://aka.ms/getTSS"
 $tempFolder = "C:\TempZ"
 $tssZipPath = "$tempFolder\TSS.zip"
