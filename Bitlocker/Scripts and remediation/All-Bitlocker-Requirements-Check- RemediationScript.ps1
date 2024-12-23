@@ -170,21 +170,17 @@ function Check-WinREStatus {
         
         # Parse the output to check if it's enabled
         if ($winREConfig -match "Windows RE status.*Enabled") {
-            Write-Output "WinRE is enabled." -ForegroundColor Green
-            #Exit 0  # Exit with success code
+            Write-Host "WinRE is enabled." -ForegroundColor Green
+            return $true
         } else {
-            Write-Output "WinRE is either disabled or cannot be determined." -ForegroundColor Red
-            #Exit 1  # Exit with failure code
+            Write-Host "WinRE is either disabled or cannot be determined." -ForegroundColor Red
+            return $false
         }
     } catch {
-        Write-Output "Error querying WinRE status: $_" -ForegroundColor Yellow
-        #Exit 1  # Exit with failure code
+        Write-Host "Error querying WinRE status: $_" -ForegroundColor Yellow
+        return $false
     }
 }
-
-# Run the function
-Check-WinREStatus
-
 
 # Main Detection Block
 $tpmCheck = Check-TPM
@@ -192,10 +188,10 @@ $uefiCheck = Check-UEFI
 $secureBootCheck = Check-SecureBoot
 $kernelDMACheck = Check-KernelDMAProtection
 $pcr7Check = Check-PCR7Configuration
-$CheckWinREStatus = Check-WinREStatus
+$winRECheck = Check-WinREStatus
 
 # If all requirements are met, return success
-if ($tpmCheck -and $uefiCheck -and $secureBootCheck -and $kernelDMACheck -and $pcr7Check -and $CheckWinREStatus) {
+if ($tpmCheck -and $uefiCheck -and $secureBootCheck -and $kernelDMACheck -and $pcr7Check -and $winRECheck) {
     Write-Host "All requirements for BitLocker silent encryption are met." -ForegroundColor Green
     exit 0  # Exit with code 0 for success
 } else {
